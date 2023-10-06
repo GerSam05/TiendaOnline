@@ -1,4 +1,5 @@
 ﻿using Azure;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -8,6 +9,7 @@ using TiendaOnline_API.Models;
 
 namespace TiendaOnline_API.Controllers
 {
+    [EnableCors("CorsRules")]
     [Route("api/[controller]")]
     [ApiController]
     public class ArticuloController : ControllerBase
