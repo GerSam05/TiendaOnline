@@ -53,9 +53,52 @@ namespace TiendaOnline_API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
 
-            return CreatedAtAction(nameof(Get), new { newArticulo.Id }, result);
+            return StatusCode(StatusCodes.Status201Created, result);
         }
 
-        
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> Put(int id, [FromBody] Articulo articulo)
+        {
+            var funcion = new DataArticulo();
+            articulo.Id = id;
+            var result = await funcion.ObtenerArticulo(id);
+            if (result.Resultado == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, result);
+            }
+
+            var result2 = await funcion.EditarArticulo(articulo);
+            if (result2.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                result2.Resultado = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, result2);
+            }
+            return Ok(result2);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> Delete(int id)
+        {
+            var funcion = new DataArticulo();
+            var result = await funcion.ObtenerArticulo(id);
+            if (result.Resultado == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, result);
+            }
+
+            var result2 = await funcion.EliminarArticulo(id);
+            if (result2.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                result2.Resultado = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, result2);
+            }
+            return Ok(result2);
+        }
     }
 }

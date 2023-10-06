@@ -6,9 +6,9 @@ namespace TiendaOnline_API.Models
     {
         public HttpStatusCode StatusCode { get; set; }
         public bool IsExitoso { get; set; } = true;
-        public string ErrorMessage { get; set; }
-        public List<string> ExceptionMessages { get; set; }
-        public Object Resultado { get; set; }
+        public string? ErrorMessage { get; set; }
+        public List<string>? ExceptionMessages { get; set; }
+        public Object? Resultado { get; set; }
 
 
         public Object Editado() => Resultado = new { message = "Editado" };
