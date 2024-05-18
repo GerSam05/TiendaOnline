@@ -46,15 +46,15 @@ namespace TiendaOnline_API.Data
                         }
                     }
                 }
-                _response.Resultado = lista;
+                _response.Result = lista;
                 _response.StatusCode = HttpStatusCode.OK;
                 return _response;
             }
             catch (Exception ex)
             {
-                _response.IsExitoso = false;
+                _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.ExceptionMessages = new List<string> { ex.ToString() };
+                _response.Message = ex.ToString();
             }
             return _response;
         }
@@ -94,18 +94,19 @@ namespace TiendaOnline_API.Data
                 if (articuloId == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
-                    _response.IsExitoso = false;
-                    _response.ErrorNotFound(id);
+                    _response.IsSuccess = false;
+                    _response.ErrorNotFound();
                     return _response;
                 }
-                _response.Resultado = articuloId;
+                _response.Result = articuloId;
                 _response.StatusCode = HttpStatusCode.OK;
                 return _response;
             }
             catch (Exception ex)
             {
-                _response.IsExitoso = false;
-                _response.ExceptionMessages = new List<string> { ex.ToString() };
+                _response.IsSuccess = false;
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.Message = ex.ToString();
             }
             return _response;
         }
@@ -116,6 +117,7 @@ namespace TiendaOnline_API.Data
             {
                 using (var sql = new SqlConnection(cn.CadenaSQL()))
                 {
+                    int id;
                     var cmd = new SqlCommand("sp_GuardarArticulo", sql);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@codigo", newArticulo.Codigo);
@@ -123,20 +125,23 @@ namespace TiendaOnline_API.Data
                     cmd.Parameters.AddWithValue("@marca", newArticulo.Marca);
                     cmd.Parameters.AddWithValue("@categoria", newArticulo.Categoria);
                     cmd.Parameters.AddWithValue("@precio", newArticulo.Precio);
+                    cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Int) { Direction = ParameterDirection.Output });
 
                     await sql.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
+                    id = (int)cmd.Parameters["@id"].Value;
+                    newArticulo.Id = id;
                 }
-
-                _response.Resultado = newArticulo;
+                
+                _response.Result = newArticulo;
                 _response.StatusCode = HttpStatusCode.Created;
                 return _response;
             }
             catch (Exception ex)
             {
-                _response.IsExitoso = false;
+                _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.ExceptionMessages = new List<string> { ex.ToString() };
+                _response.Message = ex.ToString();
             }
             return _response;
         }
@@ -160,14 +165,15 @@ namespace TiendaOnline_API.Data
                     await cmd.ExecuteNonQueryAsync();
                 }
                 _response.Editado();
+                _response.Result = newArticulo;
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return _response;
             }
             catch (Exception ex)
             {
-                _response.IsExitoso = false;
+                _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.ExceptionMessages = new List<string> { ex.ToString() };
+                _response.Message = ex.ToString();
             }
             return _response;
         }
@@ -186,14 +192,15 @@ namespace TiendaOnline_API.Data
                     await cmd.ExecuteNonQueryAsync();
                 }
                 _response.Eliminado();
+                _response.Result = null;
                 _response.StatusCode = HttpStatusCode.NoContent;
                 return _response;
             }
             catch (Exception ex)
             {
-                _response.IsExitoso = false;
+                _response.IsSuccess = false;
                 _response.StatusCode = HttpStatusCode.InternalServerError;
-                _response.ExceptionMessages = new List<string> { ex.ToString() };
+                _response.Message = ex.ToString();
             }
             return _response;
         }

@@ -20,12 +20,12 @@ namespace TiendaOnline_API.Controllers
         public async Task<ActionResult<APIResponse>> GetAll()
         {
             var funcion = new DataArticulo();
-            var result = await funcion.MostrarArticulos();
-            if (result.IsExitoso == false)
+            var response = await funcion.MostrarArticulos();
+            if (response.IsSuccess == false)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
-            return Ok(result);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
@@ -34,12 +34,12 @@ namespace TiendaOnline_API.Controllers
         public async Task<ActionResult<APIResponse>> Get(int id)
         {
             var funcion = new DataArticulo();
-            var result = await funcion.ObtenerArticulo(id);
-            if (result.StatusCode == HttpStatusCode.NotFound)
+            var response = await funcion.ObtenerArticulo(id);
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return StatusCode(StatusCodes.Status404NotFound, result);
+                return StatusCode(StatusCodes.Status404NotFound, response);
             }
-            return Ok(result);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -49,13 +49,13 @@ namespace TiendaOnline_API.Controllers
         public async Task<ActionResult<APIResponse>> Post([FromBody] Articulo newArticulo)
         {
             var funcion = new DataArticulo();
-            var result = await funcion.GuardarArticulo(newArticulo);
-            if (result.StatusCode == HttpStatusCode.InternalServerError)
+            var response = await funcion.GuardarArticulo(newArticulo);
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
 
-            return StatusCode(StatusCodes.Status201Created, result);
+            return StatusCode(StatusCodes.Status201Created, response);
         }
 
         [HttpPut("{id}")]
@@ -66,19 +66,19 @@ namespace TiendaOnline_API.Controllers
         {
             var funcion = new DataArticulo();
             articulo.Id = id;
-            var result = await funcion.ObtenerArticulo(id);
-            if (result.Resultado == null)
+            var response = await funcion.ObtenerArticulo(id);
+            if (response.Result == null)
             {
-                return StatusCode(StatusCodes.Status404NotFound, result);
+                return StatusCode(StatusCodes.Status404NotFound, response);
             }
 
-            var result2 = await funcion.EditarArticulo(articulo);
-            if (result2.StatusCode == HttpStatusCode.InternalServerError)
+            var response2 = await funcion.EditarArticulo(articulo);
+            if (response2.StatusCode == HttpStatusCode.InternalServerError)
             {
-                result2.Resultado = null;
-                return StatusCode(StatusCodes.Status500InternalServerError, result2);
+                response2.Result = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, response2);
             }
-            return Ok(result2);
+            return Ok(response2);
         }
 
         [HttpDelete("{id}")]
@@ -88,19 +88,19 @@ namespace TiendaOnline_API.Controllers
         public async Task<ActionResult<APIResponse>> Delete(int id)
         {
             var funcion = new DataArticulo();
-            var result = await funcion.ObtenerArticulo(id);
-            if (result.Resultado == null)
+            var response = await funcion.ObtenerArticulo(id);
+            if (response.Result == null)
             {
-                return StatusCode(StatusCodes.Status404NotFound, result);
+                return StatusCode(StatusCodes.Status404NotFound, response);
             }
 
-            var result2 = await funcion.EliminarArticulo(id);
-            if (result2.StatusCode == HttpStatusCode.InternalServerError)
+            var response2 = await funcion.EliminarArticulo(id);
+            if (response2.StatusCode == HttpStatusCode.InternalServerError)
             {
-                result2.Resultado = null;
-                return StatusCode(StatusCodes.Status500InternalServerError, result2);
+                response2.Result = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, response2);
             }
-            return Ok(result2);
+            return Ok(response2);
         }
     }
 }
